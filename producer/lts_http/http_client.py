@@ -45,8 +45,8 @@ class HttpClient(object):
         try:
             response = self._session.send(r, verify=False)
             response.encoding = "utf-8"
-            # logger.info("send log status code {}, response is {}", response.status_code,
-            #             response.content.decode("utf-8"))
+            logger.info("send log status code {}, response is {}", response.status_code,
+                        response.content.decode("utf-8"))
             if response.status_code == 200:
                 return None
             else:
