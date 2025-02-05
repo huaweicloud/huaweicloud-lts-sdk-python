@@ -1,6 +1,7 @@
 import math
 import queue
 import threading
+from loguru import logger
 
 from producer.lts_http import http_client
 from producer.model import log_batch
