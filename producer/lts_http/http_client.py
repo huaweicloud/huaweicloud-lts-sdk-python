@@ -5,12 +5,12 @@ from requests.adapters import HTTPAdapter
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3.util.retry import Retry
 
-from producer.auth.signer import Signer
+from auth.signer import Signer
 from producer.lts_http.simple_request import LtsRequest
 from producer.model import error
 from producer.model.config import Config
 from producer.model.log import LogGroup
-from producer.utils import common
+from utils import common
 
 
 class HttpClient(object):

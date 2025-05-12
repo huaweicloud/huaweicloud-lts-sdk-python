@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from loguru import logger
 from producer.model.log_batch import LogBatch
-from producer.utils import lts_threading
+from utils import lts_threading
 
 
 class IOThreadPool(threading.Thread):

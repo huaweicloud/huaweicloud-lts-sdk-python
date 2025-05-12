@@ -3,7 +3,7 @@ import time
 
 from loguru import logger
 
-from producer.utils import lts_threading
+from utils import lts_threading
 
 
 class MyRead(threading.Thread):

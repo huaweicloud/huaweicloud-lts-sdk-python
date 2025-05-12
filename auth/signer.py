@@ -8,9 +8,8 @@ import requests
 import six
 from loguru import logger
 
-from producer.auth import hkdf
+from auth import hkdf
 from producer.lts_http.simple_request import LtsRequest
-
 
 
 class Constants:
@@ -43,6 +42,7 @@ class Signer(object):
             signed_headers = self._signed_headers(lts_request)
 
             canonical_request = self._canonical_request(lts_request, signed_headers)
+            # logger.info("canonical request is {}", canonical_request)
             date_str = datetime.datetime.strftime(date_time, Constants.DERIVED_DATE_FORMAT)
             info_str = "%s/%s/%s" % (date_str, lts_request.region, Constants.AUTH_SERVICE_NAME)
             string_to_sign = self._string_to_sign_derived(canonical_request, date_time, info_str)
@@ -54,7 +54,7 @@ class Signer(object):
 
             url = lts_request.host + lts_request.interface
             req = requests.Request(method=lts_request.method, headers=lts_request.headers, data=lts_request.body,
-                                   url=url)
+                                   url=url, params=lts_request.query)
             return req
         except Exception as e:
             logger.error("sign request error {}", e.args)
@@ -106,26 +106,24 @@ class Signer(object):
 
     @classmethod
     def _canonical_query_string(cls, lts_request: LtsRequest):
-        params = []
-        for param in lts_request.query:
-            params.append(param)
-        params.sort()
-
+        query_keys = []
+        for key, value in lts_request.query.items():
+            query_keys.append(key)
+        query_keys.sort()
         canonical_query_param = []
-        for (key, value) in params:
-            k = cls._url_encode(key)
-            if isinstance(value, list):
-                value.sort()
-                for v in value:
-                    kv = "%s=%s" % (k, cls._url_encode(str(v)))
-                    canonical_query_param.append(kv)
-            elif isinstance(value, bool):
-                kv = "%s=%s" % (k, cls._url_encode(str(value).lower()))
-                canonical_query_param.append(kv)
-            else:
-                kv = "%s=%s" % (k, cls._url_encode(str(value)))
-                canonical_query_param.append(kv)
 
+        for query_key in query_keys:
+            encode_query_key = cls._url_encode(query_key)
+            query_value = lts_request.query[query_key]
+            if isinstance(query_value, str):
+                kv = "%s=%s" % (encode_query_key, cls._url_encode(query_value))
+                canonical_query_param.append(kv)
+            elif isinstance(query_value, bool):
+                kv = "%s=%s" % (encode_query_key, cls._url_encode(str(query_value).lower()))
+                canonical_query_param.append(kv)
+            elif isinstance(query_value, int):
+                kv = "%s=%s" % (encode_query_key, cls._url_encode(str(query_value)))
+                canonical_query_param.append(kv)
         return '&'.join(canonical_query_param)
 
     def _canonical_request(self, lts_request: LtsRequest, signed_headers: List[str]):

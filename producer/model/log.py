@@ -1,6 +1,6 @@
 from typing import List
 
-from producer.utils.common import solv_log
+from utils.common import solv_log
 
 
 class LogContent(object):

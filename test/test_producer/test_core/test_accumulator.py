@@ -1,8 +1,8 @@
 import unittest
 
 from producer.core.accumulator import Accumulator
-from producer import Config
-from producer import generate_log
+from producer.model.config import Config
+from producer.model.lts_store import generate_log
 
 
 class MyTestCase(unittest.TestCase):
