@@ -211,3 +211,9 @@ if __name__ == '__main__':
     start_consume(args.endpoint, args.region, args.project_id, args.group_id, args.stream_id, args.ak,
                   args.sk, args.consumer_group_name, args.start_time, args.end_time, args.log_level, args.is_test)
 ```
+
+#### 3. 使用约束
+1. 使用sdk消费日志前，日志组、日志流以及消费组必须存在；
+2. 使用AKSK认证时，当前不支持临时AKSK认证
+3. 消费历史日志时，只支持开通公测白名单时间点后的日志
+4. 当前只支持消费startTime为某一具体时间点的日志
