@@ -3,9 +3,9 @@ import uuid
 
 class ConsumerConfig(object):
     def __init__(self, endpoint, region_name, project_id, log_group_id, log_stream_id, access_key, access_secret,
-                 consumer_group_name, start_time_ns, end_time_ns, heartbeat_interval_mill=1000,
+                 consumer_group_name, start_time_ns, end_time_ns, batch_size, heartbeat_interval_mill=1000,
                  fetch_interval_mill=200, auto_commit_enable=True, auto_commit_interval_ms=60 * 1000, timeout_sec=60,
-                 unload_after_commit_enable=False, batch_size=1000):
+                 unload_after_commit_enable=False):
         self.endpoint = endpoint
         self.region_name = region_name
         self.project_id = project_id
