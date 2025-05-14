@@ -113,18 +113,19 @@ if __name__ == '__main__':
 
 使用LTS python SDK时，有以下配置参数：
 
-| 参数名称                | 描述                      | 类型     | 是否必填 | 默认值 |
-|---------------------|-------------------------|--------|------|-----|
-| projectId           | 华为云帐号的项目ID（project id）。 | String | 必填   |     |
-| ak                  | 华为云帐号的AK。               | String | 必填   |     |
-| sk                  | 华为云帐号的SK。               | String | 必填   |     |
-| region              | 云日志服务的区域。               | String | 必填   |     |
-| endpoint            | 日志上报的目的地址。              | String | 必填   |     |
-| logGroup            | 上报日志的日志组。               | String | 必填   |     |
-| logStream           | 上报日志的日志流。               | String | 必填   |     |
-| consumer_group_name | 消费的groupName            | string | 必填   |     |
-| start_time          | 消费开始时间                  | int    | 必填   |     |
-
+| 参数名称            | 描述                               | 类型   | 是否必填 | 默认值 |
+|---------------------|------------------------------------|--------|----------|--------|
+| projectId           | 华为云帐号的项目ID（project id）。 | String | 必填     |        |
+| ak                  | 华为云帐号的AK。                   | String | 必填     |        |
+| sk                  | 华为云帐号的SK。                   | String | 必填     |        |
+| region              | 云日志服务的区域。                 | String | 必填     |        |
+| endpoint            | 日志上报的目的地址。               | String | 必填     |        |
+| logGroup            | 上报日志的日志组。                 | String | 必填     |        |
+| logStream           | 上报日志的日志流。                 | String | 必填     |        |
+| consumer_group_name | 消费的groupName                    | string | 必填     |        |
+| start_time          | 消费开始时间                       | int    | 必填     |        |
+| consume_batch_size  | 一次能拉取最大日志数量             | int    | 选填     | 1000   |
+| consumer_count      | 消费者的数量                       | int    | 选填     | 1      |
 #### 2. 代码示例
 ```python
 import argparse
@@ -164,7 +165,7 @@ class DemoLogConsumerProcessorFactory(ILogConsumerProcessorFactory):
 
 
 def start_consume(endpoint, region_name, project_id, log_group_id, log_stream_id, access_key, access_secret,
-                  consumer_group_name, start_time, end_time, log_level, is_test):
+                  consumer_group_name, start_time, end_time, log_level, is_test, consumer_count, consume_batch_size):
     logger.remove()
     logger.add(sys.stderr, level=log_level)
     if is_test:
@@ -172,9 +173,9 @@ def start_consume(endpoint, region_name, project_id, log_group_id, log_stream_id
     logger.info("start time {}, end time {}", start_time, end_time)
     workers = []
 
-    for i in range(1):
+    for i in range(consumer_count):
         config = ConsumerConfig(endpoint, region_name, project_id, log_group_id, log_stream_id, access_key,
-                                access_secret, consumer_group_name, start_time, end_time)
+                                access_secret, consumer_group_name, start_time, end_time, consume_batch_size)
         work = get_client_consumer_worker(DemoLogConsumerProcessorFactory(), config)
         if work is None:
             logger.error("get work error, work is none")
@@ -200,16 +201,22 @@ if __name__ == '__main__':
     parser.add_argument('--stream_id', dest='stream_id', type=str, help='send log stream_id', default="stream_id")
     parser.add_argument('--ak', dest='ak', type=str, help='huaweicloud ak', default="ak")
     parser.add_argument('--sk', dest='sk', type=str, help='huaweicloud sk', default="sk")
+    parser.add_argument('--consumer_count', dest='consumer_count', type=int, help='consumer count', default=1)
+    parser.add_argument('--consume_batch_size', dest='consume_batch_size', type=int, help='each fetch max log nums',
+                        default=1000)
     parser.add_argument('--consumer_group_name', dest='consumer_group_name', type=str, help='consumer group name',
                         default="consumer_group_name")
     parser.add_argument('--start_time', dest='start_time', type=int, help='consume log start time ms',
                         default=213123123123)
     parser.add_argument('--end_time', dest='end_time', type=int, help='consume log end time ms', default=0)
     parser.add_argument('--log_level', dest='log_level', type=str, help='consume log end time ms', default="INFO")
-    parser.add_argument('--is_test', dest='is_test', type=bool, help='test consumer will write log to node', default=True)
+    parser.add_argument('--is_test', dest='is_test', type=bool, help='test consumer will write log to node',
+                        default=True)
     args = parser.parse_args()
     start_consume(args.endpoint, args.region, args.project_id, args.group_id, args.stream_id, args.ak,
-                  args.sk, args.consumer_group_name, args.start_time, args.end_time, args.log_level, args.is_test)
+                  args.sk, args.consumer_group_name, args.start_time, args.end_time, args.log_level, args.is_test,
+                  args.consumer_count, args.consume_batch_size)
+
 ```
 
 #### 3. 使用约束
