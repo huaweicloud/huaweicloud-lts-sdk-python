@@ -2,7 +2,7 @@ import threading
 import time
 
 from producer.model.retry_queue import RetryQueue
-from producer.utils import common
+from utils import common
 
 
 class Mover(threading.Thread):

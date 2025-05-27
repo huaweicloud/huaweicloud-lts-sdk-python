@@ -6,7 +6,7 @@ from loguru import logger
 from producer.core.producer import Producer
 from producer.model import lts_store
 from producer.model.config import Config
-from producer.utils import common
+from utils import common
 
 
 def generate_random_str(str_len=16):

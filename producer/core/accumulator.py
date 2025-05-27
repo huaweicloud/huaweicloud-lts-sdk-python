@@ -2,12 +2,12 @@ from loguru import logger
 
 from producer.model import log_batch
 from producer.model.log import Log
-from producer.utils import common
-from producer.utils import lts_threading
+from utils import lts_threading
 
 DELIMITER = "|"
 
 log_num = 0
+
 
 class Accumulator(object):
 

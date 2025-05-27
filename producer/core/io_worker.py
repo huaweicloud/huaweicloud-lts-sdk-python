@@ -6,8 +6,7 @@ from producer.lts_http import http_client
 from producer.model import log_batch
 from producer.model import result
 from producer.model.error import Error
-from producer.utils import common
-from producer.utils import lts_threading
+from utils import lts_threading, common
 
 
 class IOWorker(threading.Thread):

@@ -2,7 +2,7 @@ import queue
 import threading
 
 from producer.model import log_batch
-from producer.utils import common
+from utils import common
 
 
 class RetryQueue(object):

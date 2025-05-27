@@ -4,7 +4,7 @@ from typing import List
 from producer.model.config import Config
 from producer.model.log import LogGroup, Log
 from producer.model.result import Result
-from producer.utils import common
+from utils import common
 
 
 class LogBatch(object):

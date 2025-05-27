@@ -5,12 +5,12 @@ from requests.adapters import HTTPAdapter
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3.util.retry import Retry
 
-from producer.auth.signer import Signer
+from auth.signer import Signer
 from producer.lts_http.simple_request import LtsRequest
 from producer.model import error
 from producer.model.config import Config
 from producer.model.log import LogGroup
-from producer.utils import common
+from utils import common
 
 
 class HttpClient(object):
@@ -32,6 +32,10 @@ class HttpClient(object):
         if log_group is None or len(log_group.log_items) == 0:
             return None
 
+        log_num = 0
+        for item in log_group.log_items:
+            log_num += len(item.contents)
+
         body = common.convert_obj2_json_str(log_group)
         header = {"content-type": "application/json"}
 
@@ -43,15 +47,16 @@ class HttpClient(object):
         request = self._signer.sign(req)
         r = request.prepare()
         try:
+            logger.info("start send log num is {}", log_num)
             response = self._session.send(r, verify=False)
             response.encoding = "utf-8"
-            # logger.info("send log status code {}, response is {}", response.status_code,
-            #             response.content.decode("utf-8"))
+            logger.info("send log status code {}, response is {}, send log num {}", response.status_code,
+                        response.content.decode("utf-8"), log_num)
             if response.status_code == 200:
                 return None
             else:
                 return error.Error(error_code=error.HTTP_QUEST_ERROR_CODE, error_msg=response.content.decode("utf-8"),
                                    http_code=response.status_code)
         except Exception as e:
-            logger.error("send log error {}", e)
+            logger.error("send log error {}, log num {}", e, log_num)
             return error.Error(error_code=error.HTTP_QUEST_ERROR_CODE, error_msg=str(e), http_code=0)
