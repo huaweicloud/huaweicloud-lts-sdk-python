@@ -39,7 +39,7 @@ def start_consume(endpoint, region_name, project_id, log_group_id, log_stream_id
     logger.remove()
     logger.add(sys.stderr, level=log_level)
     if is_test:
-        logger.add("/fanxin/log.log", level="DEBUG")
+        logger.add("/opt/cloud/log.log", level="DEBUG")
     logger.info("start time {}, end time {}", start_time, end_time)
     workers = []
 
